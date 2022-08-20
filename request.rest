@@ -1,0 +1,13 @@
+POST http://localhost:5000/chapters 
+Content-Type: application/json
+
+{
+    "title": "Mantap"
+}
+
+###
+GET http://localhost:5000/courses
+Content-Type: application/json
+###
+GET http://localhost:5000/courses/html
+Content-Type: application/json
