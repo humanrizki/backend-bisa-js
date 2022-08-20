@@ -1,5 +1,6 @@
 import { db } from "../config/Database.js"
 import { DataTypes } from "sequelize"
+import Roles from "./roles.js"
 export const Users = db.define('users', {
   name: {
     type: DataTypes.STRING,
@@ -97,6 +98,8 @@ const CourseUser = db.define('courses_users', {
 }, {
   freezeTableName: true,
 })
+Roles.hasMany(Users)
+Users.belongsTo(Roles, {foreignKey: 'roleId'})
 Users.belongsToMany(Courses, {
   through: CourseUser,
   as: 'courses',

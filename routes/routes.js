@@ -4,6 +4,7 @@ import Chapter from './../models/chapters.js'
 // import Users from "../models/users.js"
 import Module from './../models/modules.js'
 import {Courses, Users} from "../models/course_user.js"
+import Roles from "../models/roles.js"
 const router = express.Router()
 
 router.get('/courses', async(req, res)=>{
@@ -29,10 +30,16 @@ router.get('/courses/:courseSlug', async(req,res)=>{
                 slug: req.params.courseSlug,
                 
             },
+            attributes: ['id','title','image','description'],
             include: {
                 model: Users,
                 as: 'users',
-                attributes: ['name','email','username','roleId']
+                attributes: ['name','email','username','roleId'],
+                include: {
+                    model: Roles,
+                    as: 'role',
+                    attributes: ['type']
+                }
             }
         })
         
