@@ -1,6 +1,25 @@
 import { db } from "../config/Database.js"
 import { DataTypes } from "sequelize"
 import Roles from "./roles.js"
+import Sequelize from 'sequelize'
+export const Subcribes = db.define('subcribes', {
+  courseId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    validate: {
+      notEmpty: true
+    }
+  },
+  userId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    validate: {
+      notEmpty: true
+    }
+  },
+}, {
+  freezeTableName: true
+}) 
 export const Users = db.define('users', {
   name: {
     type: DataTypes.STRING,
@@ -14,7 +33,11 @@ export const Users = db.define('users', {
     type: DataTypes.STRING,
     allowNull: false,
     alphadashed: true,
-    unique: true,
+    unique: {
+      args: true,
+      msg: 'Ups, Akun dengan Username ini sudah ada!',
+      fields: [Sequelize.fn('lower', Sequelize.col('username'))]
+    },
     validate: {
       notEmpty: true,
       len: [2, 100]
@@ -23,7 +46,11 @@ export const Users = db.define('users', {
   email: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true,
+    unique: {
+      args: true,
+      msg: 'Ups, Akun dengan Email ini sudah ada!',
+      fields: [Sequelize.fn('lower', Sequelize.col('email'))]
+    },
     validate: {
       notEmpty: true,
       isEmail: true
@@ -45,6 +72,12 @@ export const Users = db.define('users', {
   },
 }, {
   freezeTableName: true,
+  indexes: [
+    {
+      unique: true,
+      fields: ['username', 'email']
+    }
+  ]
 })
 export const Courses = db.define('courses', {
   title: {
@@ -105,9 +138,19 @@ Users.belongsToMany(Courses, {
   as: 'courses',
   foreignKey: 'userId'
 })
+Users.belongsToMany(Courses, {
+  through: Subcribes,
+  as: 'coursesSub',
+  foreignKey: 'userId'
+})
 Courses.belongsToMany(Users, {
   through: CourseUser,
   as: 'users',
   foreignKey: 'courseId'
+})
+Courses.belongsToMany(Users, {
+  through: Subcribes,
+  foreignKey: 'courseId',
+  as: 'subscribers'
 })
 export default CourseUser

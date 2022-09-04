@@ -1,6 +1,10 @@
 import express from 'express'
 import session from 'express-session'
 import cors from 'cors'
+// Use SequelizeStore to save login user
+import SequelizeStore from 'connect-session-sequelize'
+// Import config db
+import { db } from './config/Database.js'
 // Import all routes
 import router from './routes/routes.js'
 // Configure dotenv
@@ -9,6 +13,12 @@ dotenv.config()
 
 // Initialize Express app
 const app = express()
+
+// Configure store
+const sessionStore = SequelizeStore(session.Store)
+const store = new sessionStore({
+    db: db
+});
 
 // Configure express can able to use json in response or request
 app.use(express.json())
@@ -27,10 +37,14 @@ app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
+    store: store,
     cookie: {
         secure: 'auto'
     }
 }))
+
+//generate sync session
+// store.sync()
 
 // Defining All Routes 
 app.use(router)
