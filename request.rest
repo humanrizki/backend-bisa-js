@@ -12,7 +12,7 @@ Content-Type: application/json
 GET http://localhost:5000/courses
 Content-Type: application/json
 ###
-GET http://localhost:5000/courses/js/subscribe
+POST http://localhost:5000/courses/js/subscribe
 Content-Type: application/json
 ###
 POST http://localhost:5000/login 
